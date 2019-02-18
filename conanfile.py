@@ -8,7 +8,7 @@ class AlureConan(ConanFile):
     md5 = '77cbee1d57ec4ec7d9b3ffef19e08f76' # for the .tar.gz archive
     license = 'MIT'
     author = 'henry4k <henry4k@example.org>' # TODO
-    url = 'https://github.com/henry4k/alure-conan'
+    url = 'https://github.com/henry4k/conan-alure'
     homepage = 'https://kcat.strangesoft.net/alure.html'
     description = 'ALURE is a utility library to help manage common tasks with OpenAL applications'
     topics = ('audio')
@@ -26,7 +26,8 @@ class AlureConan(ConanFile):
     requires = (('openal/1.19.0@bincrafters/stable'),
                 ('ogg/1.3.3@bincrafters/stable'),
                 ('vorbis/1.3.6@bincrafters/stable'),
-                ('flac/1.3.2@bincrafters/stable'))
+                ('flac/1.3.2@bincrafters/stable'),
+                ('mpg123/1.25.6@sixten-hilborn/stable'))
 
     def source(self):
         source_url_template = 'https://kcat.strangesoft.net/alure-releases/alure-{0}.tar.gz'
@@ -50,13 +51,13 @@ class AlureConan(ConanFile):
         cmake.definitions['BUILD_SHARED'] = 'ON' if self.options.shared else 'OFF'
         cmake.definitions['BUILD_STATIC'] = 'ON' if not self.options.shared else 'OFF'
         cmake.definitions['DYNLOAD'] = 'ON' if self.options.dynload else 'OFF'
+        cmake.definitions['MPG123'] = 'ON'
         cmake.definitions['VORBIS'] = 'ON'
         cmake.definitions['FLAC'] = 'ON'
         cmake.definitions['SNDFILE'] = 'OFF'
         cmake.definitions['DUMB'] = 'OFF'
         cmake.definitions['MODPLUG'] = 'OFF'
         cmake.definitions['FLUIDSYNTH'] = 'OFF'
-        cmake.definitions['MPG123'] = 'OFF'
         cmake.definitions['BUILD_EXAMPLES'] = 'OFF'
         cmake.definitions['INSTALL_EXAMPLES'] = 'OFF'
         cmake.configure()
@@ -73,8 +74,8 @@ class AlureConan(ConanFile):
                   src=self.source_subfolder,
                   dst='licenses',
                   keep_path=False)
-
-    def package_info(self):
         self.copy('CMakeLists.txt', '.', '.')
         self.copy('FindALURE.cmake', '.', '.')
+
+    def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)

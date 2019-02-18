@@ -26,6 +26,7 @@ if(NOT FLAC_FOUND)
                      flac
                      PATHS ${CONAN_LIB_DIRS_FLAC})
         set(FLAC_LIBRARIES ${FLAC_LIBRARY})
+        set(FLAC_LIBRARY_DIRS ${CONAN_LIB_DIRS_FLAC})
     endif()
 
     # ALUREs dynload feature needs this:
@@ -37,9 +38,35 @@ if(NOT FLAC_FOUND)
                      FLAC_INCLUDE_DIRS
                      FLAC_LIBRARY
                      FLAC_LIBRARIES
+                     FLAC_LIBRARY_DIRS
                      LIBFLAC_LIBRARIES)
+endif()
 
-     message(STATUS ">>>>>>>>>>>>>>> ${FLAC_INCLUDE_DIR}")
+# The MPG123 library has no CMake support in its Conan package:
+if(NOT MPG123_FOUND)
+    if(NOT MPG123_INCLUDE_DIR)
+        find_path(MPG123_INCLUDE_DIR
+                  NAMES mpg123.h
+                  PATHS ${CONAN_INCLUDE_DIRS_MPG123})
+        set(MPG123_INCLUDE_DIRS ${MPG123_INCLUDE_DIR})
+    endif()
+
+    if(NOT MPG123_LIBRARY)
+        find_library(MPG123_LIBRARY
+                     ${CONAN_LIBS_MPG123}
+                     PATHS ${CONAN_LIB_DIRS_MPG123})
+        set(MPG123_LIBRARIES ${MPG123_LIBRARY})
+        set(MPG123_LIBRARY_DIRS ${CONAN_LIB_DIRS_MPG123})
+    endif()
+
+    set(MPG123_FOUND TRUE)
+    mark_as_advanced(MPG123_FOUND
+                     MPG123_INCLUDE_DIR
+                     MPG123_INCLUDE_DIRS
+                     MPG123_LIBRARY
+                     MPG123_LIBRARIES
+                     MPG123_LIBRARY_DIRS
+                     LIBMPG123_LIBRARIES)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/source_subfolder/cmake")
