@@ -1,0 +1,26 @@
+variables:
+    CONAN_LOGIN_USERNAME: henry4k
+    # pass CONAN_PASSWORD via CI
+    CONAN_USERNAME: henry4k
+    CONAN_REFERENCE: alure/1.2
+    CONAN_CHANNEL: stable
+
+build:linux:
+    image: conanio/gcc8
+    parallel: 2
+    before_script:
+        - sudo apt-get -qq update
+        - sudo apt-get -qq install -y --no-install-recommends python3-pip
+        - sudo pip install --upgrade conan_package_tools
+        - pip3 install meson
+        - conan remote add bincrafters 'https://api.bintray.com/conan/bincrafters/public-conan' || true
+        - conan remote add sixten-hilborn 'https://api.bintray.com/conan/sixten-hilborn/public-conan' || true
+        - conan remote add henry4k 'https://api.bintray.com/conan/henry4k/conan' || true
+        - conan user --remote henry4k
+    script:
+        - export CONAN_CURRENT_PAGE=$CI_NODE_INDEX
+        - export CONAN_TOTAL_PAGES=$CI_NODE_TOTAL
+        - python build.py
+        - conan upload --remote henry4k --all --confirm "$CONAN_REFERENCE@$CONAN_USERNAME/$CONAN_CHANNEL"
+    after_script:
+        - conan user --clean

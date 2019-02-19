@@ -5,8 +5,11 @@ include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 # We don't want to include/link everything!
 conan_basic_setup(TARGETS)
 
-# These have proper CMake support in their Conan packages:
 find_package(OpenAL)
+# The provided FindOpenAL.cmake don't declares this correctly:
+set(OPENAL_INCLUDE_DIR ${CONAN_INCLUDE_DIRS})
+
+# These have proper CMake support in their Conan packages:
 find_package(OGG)
 find_package(VORBIS)
 # ALUREs dynload feature needs this:
@@ -33,13 +36,6 @@ if(NOT FLAC_FOUND)
     set(LIBFLAC_LIBRARIES "${FLAC_LIBRARY}")
 
     set(FLAC_FOUND TRUE)
-    mark_as_advanced(FLAC_FOUND
-                     FLAC_INCLUDE_DIR
-                     FLAC_INCLUDE_DIRS
-                     FLAC_LIBRARY
-                     FLAC_LIBRARIES
-                     FLAC_LIBRARY_DIRS
-                     LIBFLAC_LIBRARIES)
 endif()
 
 # The MPG123 library has no CMake support in its Conan package:
@@ -60,13 +56,6 @@ if(NOT MPG123_FOUND)
     endif()
 
     set(MPG123_FOUND TRUE)
-    mark_as_advanced(MPG123_FOUND
-                     MPG123_INCLUDE_DIR
-                     MPG123_INCLUDE_DIRS
-                     MPG123_LIBRARY
-                     MPG123_LIBRARIES
-                     MPG123_LIBRARY_DIRS
-                     LIBMPG123_LIBRARIES)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/source_subfolder/cmake")

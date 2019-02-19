@@ -22,6 +22,7 @@ class AlureConan(ConanFile):
     generators = 'cmake'
     source_subfolder = 'source_subfolder'
     exports_sources = ['CMakeLists.txt',
+                       'CMakeLists.txt.patch',
                        'FindALURE.cmake']
     requires = (('openal/1.19.0@bincrafters/stable'),
                 ('ogg/1.3.3@bincrafters/stable'),
@@ -35,9 +36,9 @@ class AlureConan(ConanFile):
         extracted_dir = 'alure-{0}'.format(self.version)
         os.rename(extracted_dir, self.source_subfolder)
 
-        pattern = 'SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")\n'
-        cmake_file = os.path.join(self.source_subfolder, 'CMakeLists.txt')
-        tools.replace_in_file(cmake_file, pattern, '')
+        tools.patch(base_path=self.source_subfolder,
+                    patch_file='CMakeLists.txt.patch',
+                    strip=1)
 
         tools.replace_in_file(os.path.join(self.source_subfolder,
                                            'cmake',
